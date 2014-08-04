@@ -1,12 +1,8 @@
 import time
-from move import get_remote_controller
-from settings import CONTROLLER_URL
-
+from move import controller
 
 
 if __name__ == "__main__":
-    controller = get_remote_controller(CONTROLLER_URL)
-
     while True:
         # While the 'move' button hasn't been pressed
         while not controller.btn_move:

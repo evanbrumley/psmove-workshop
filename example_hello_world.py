@@ -1,12 +1,9 @@
 import time
-from move import get_remote_controller
-from settings import CONTROLLER_URL
+from move import controller
 
 
 
 if __name__ == "__main__":
-    controller = get_remote_controller(CONTROLLER_URL)
-
     # Set the light to pure red
     controller.set_color(255, 0, 0)
    

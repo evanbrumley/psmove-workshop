@@ -1,6 +1,7 @@
 import sys, os, time
 from threading import Thread
 import requests
+from settings import CONTROLLER_URL
 
 
 PSMOVEAPI_BUILD_DIR = os.environ.get('PSMOVEAPI_BUILD_DIR')
@@ -275,3 +276,6 @@ def get_controllers(read_only=False):
 
 def get_remote_controller(url):
     return RemoteController(url)
+
+
+controller = get_remote_controller(CONTROLLER_URL)
