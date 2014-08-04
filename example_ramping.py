@@ -1,12 +1,12 @@
 import time
 from move import get_remote_controller
+from settings import CONTROLLER_URL
 
-
-
-controller = get_remote_controller("http://localhost:5000/controllers/1/")  # Change me!
 
 
 if __name__ == "__main__":
+    controller = get_remote_controller(CONTROLLER_URL)
+	
     for i in range(50, 255):
         controller.rumble = i
         time.sleep(0.05)
