@@ -4,13 +4,19 @@
 
 First, install the requirements:
 
-    `pip install -r requirements.txt`
+    pip install -r requirements.txt
 
 Next, edit `settings.py` and update `CONTROLLER_ID` to match the number on your controller.
 
 You should now be able to run the example programs:
 
-    `python example_hello_word.py`
+    python example_hello_word.py
+
+## Using the API
+
+    from move import controller
+
+    controller.rumble = 255
 
 ## The controller API
 
@@ -19,6 +25,14 @@ You should now be able to run the example programs:
 - `controller.green`: the intensity of the green LED (0-255)
 - `controller.blue`: the intensity of the blue LED (0-255)
 - `controller.rumble`: the rumble intensity (0-255)
+
+Colors can also be set all at once using:
+
+    controller.set_color(<red>, <green>, <blue>)
+
+So to set the controller to bright white, you would use the following:
+
+    controller.set_color(255, 255, 255)
 
 ### Things you can read
 
