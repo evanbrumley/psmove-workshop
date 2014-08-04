@@ -54,16 +54,16 @@ These fields provide the rotational acceleration of the controller. For all of t
 
 #### Buttons
 
-- `controller.btn_circle`: provides 'True' if the circle button is currently pressed down. False otherwise
-- `controller.btn_cross`: provides 'True' if the cross  button is currently pressed down. False otherwise
-- `controller.btn_square`: provides 'True' if the square button is currently pressed down. False otherwise
-- `controller.btn_triangle`: provides 'True' if the triangle button is currently pressed down. False otherwise
-- `controller.btn_ps`: provides 'True' if the playstation button is currently pressed down. False otherwise
-- `controller.btn_select`: provides 'True' if the select button is currently pressed down. False otherwise
-- `controller.btn_start`: provides 'True' if the start button is currently pressed down. False otherwise
-- `controller.btn_t`: provides 'True' if the trigger button is currently pressed down. False otherwise
-- `controller.btn_move`: provides 'True' if the big 'move' button is currently pressed down. False otherwise
+- `controller.btn_circle`: provides True if the circle button is currently pressed down. False otherwise
+- `controller.btn_cross`: provides True if the cross  button is currently pressed down. False otherwise
+- `controller.btn_square`: provides True if the square button is currently pressed down. False otherwise
+- `controller.btn_triangle`: provides True if the triangle button is currently pressed down. False otherwise
+- `controller.btn_ps`: provides True if the playstation button is currently pressed down. False otherwise
+- `controller.btn_select`: provides True if the select button is currently pressed down. False otherwise
+- `controller.btn_start`: provides True if the start button is currently pressed down. False otherwise
+- `controller.btn_t`: provides True if the trigger button is currently pressed down. False otherwise
+- `controller.btn_move`: provides True if the big 'move' button is currently pressed down. False otherwise
 - `controller.trigger`: gives a value from 0-255 depending on how far the trigger has been pulled
 
 #### Other stuff
-- `controller.battery`: the controller's battery level
+- `controller.battery`: the controller's battery level (0 is empty, 5 is full)
