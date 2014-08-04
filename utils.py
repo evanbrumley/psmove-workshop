@@ -1,4 +1,5 @@
 import sys, os, time
+from collections import defaultdict
 from threading import Thread
 import requests
 from settings import CONTROLLER_URL
@@ -37,6 +38,10 @@ class Controller(object):
     btn_move = False
     btn_t = False
     btn_ps = False
+
+    button_events_on = None
+    button_events_off = None
+
     trigger = 0
     battery = 0
 
@@ -146,19 +151,37 @@ class RemoteController(Controller):
     _blue = 0
     _rumble = 0
     _dirty = True  # Default to True so values get cleared on startup
+    
+    _callbacks = None
 
     def __init__(self, url):
         self.url = url
         self.start_loop()
+
+        self._callbacks = defaultdict(lambda: defaultdict(list))
     
     def _loop(self):
         while(self._active):
             self.update_state()
+            self.process_callbacks()
             time.sleep(0.02)
 
             if self._dirty:
                 self.update_remote_state()
                 self._dirty = False
+
+    def process_callbacks(self):
+        for event in self.button_events_on:
+            callbacks = self._callbacks[event]['on']
+
+            for callback in callbacks:
+                callback.run()
+
+        for event in self.button_events_off:
+            callbacks = self._callbacks[event]['off']
+
+            for callback in callbacks:
+                callback.run()
 
     def terminate(self):
         # Let the loop do its thing until
@@ -250,6 +273,14 @@ class RemoteController(Controller):
 
         result = response.json()
 
+        # Don't record events on the first run!
+        if self.button_events_on is None or self.button_events_off is None:
+            self.button_events_on = []
+            self.button_events_off = []
+        else:
+            self.button_events_on = result.get('button_events_on')
+            self.button_events_off = result.get('button_events_off')
+
         self.btn_triangle = result.get('btn_triangle')
         self.btn_circle = result.get('btn_circle')
         self.btn_cross = result.get('btn_cross')
@@ -267,6 +298,80 @@ class RemoteController(Controller):
         self.gx =  result.get('gx')
         self.gy = result.get('gy')
         self.gz = result.get('gz')
+
+    def add_callback(self, event, event_type, func, args, kwargs):
+        callback = Callback(func, args, kwargs)
+        self._callbacks[event][event_type].append(callback)
+        return callback
+
+    def on_btn_triangle(self, func, *args, **kwargs):
+        return self.add_callback('btn_triangle', 'on', func, args, kwargs)
+
+    def on_btn_triangle_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_triangle', 'off', func, args, kwargs)
+
+    def on_btn_cross(self, func, *args, **kwargs):
+        return self.add_callback('btn_cross', 'on', func, args, kwargs)
+
+    def on_btn_cross_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_cross', 'off', func, args, kwargs)
+    
+    def on_btn_circle(self, func, *args, **kwargs):
+        return self.add_callback('btn_circle', 'on', func, args, kwargs)
+
+    def on_btn_circle_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_circle', 'off', func, args, kwargs)
+    
+    def on_btn_square(self, func, *args, **kwargs):
+        return self.add_callback('btn_square', 'on', func, args, kwargs)
+
+    def on_btn_square_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_square', 'off', func, args, kwargs)
+
+    def on_btn_move(self, func, *args, **kwargs):
+        return self.add_callback('btn_move', 'on', func, args, kwargs)
+
+    def on_btn_move_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_move', 'off', func, args, kwargs)
+
+    def on_btn_ps(self, func, *args, **kwargs):
+        return self.add_callback('btn_ps', 'on', func, args, kwargs)
+
+    def on_btn_ps_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_ps', 'off', func, args, kwargs)
+    
+    def on_btn_start(self, func, *args, **kwargs):
+        return self.add_callback('btn_start', 'on', func, args, kwargs)
+
+    def on_btn_start_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_start', 'off', func, args, kwargs)
+
+    def on_btn_select(self, func, *args, **kwargs):
+        return self.add_callback('btn_select', 'on', func, args, kwargs)
+
+    def on_btn_select_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_select', 'off', func, args, kwargs)
+    
+    def on_btn_t(self, func, *args, **kwargs):
+        return self.add_callback('btn_t', 'on', func, args, kwargs)
+
+    def on_btn_t_release(self, func, *args, **kwargs):
+        return self.add_callback('btn_t', 'off', func, args, kwargs)
+
+
+class Callback(object):
+    def __init__(self, func, args, kwargs):
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        thread = Thread(target=self._run)
+        thread.daemon = True
+        thread.start()
+
+    def _run(self):
+        self.func(*self.args, **self.kwargs)
 
 
 def get_controllers(read_only=False):
